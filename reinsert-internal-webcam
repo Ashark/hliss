@@ -1,0 +1,10 @@
+#!/bin/bash
+
+PRODUCTNAME=`sudo dmidecode -t baseboard | grep "Product Name" | cut -f2 -d':'`
+
+# I want to be sure that you do not run this on your machine without finding out usb bus id and port id. See readme first.
+# So I will do this check first
+if [[ "$PRODUCTNAME" == " Flex 3-1570" ]]; then 
+	sudo sh -c "echo '0'> /sys/bus/usb/devices/1-4/bConfigurationValue"
+	sudo sh -c "echo '1'> /sys/bus/usb/devices/1-4/bConfigurationValue" 
+fi

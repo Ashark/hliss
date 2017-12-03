@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# echo "Probing v4l2-loopback"
+sudo rmmod v4l2loopback
+sudo modprobe v4l2loopback video_nr=7 'card_label=myFakeCam'
+
+ffmpeg -f x11grab -r 20 -s 1920x1080 -i :0.0+0,0 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7

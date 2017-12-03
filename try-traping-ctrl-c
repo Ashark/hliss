@@ -1,0 +1,14 @@
+#!/bin/bash
+
+trapeze () {
+
+printf "\rYikes! Trying to kill me!!\n"
+exit 0;
+}
+
+trap trapeze SIGINT
+
+while true; do
+ read crap
+ printf "You entered some text.."
+done

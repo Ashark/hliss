@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# trap ctrl-c and call ctrl_c()
+
+function ctrl_c() {
+    echo "** Trapped CTRL-C"
+    killall extramaus # kill all previous instances of extramaus
+    killall vlc # kill all previous instances of vlc
+#     sleep 2
+    exit 0;
+}
+
+trap ctrl_c SIGINT
+# trap ctrl_c SIGTERM
+
+~/bin/extramaus & # launch extramaus and background it
+cvlc ${IFS# cvlc will prevent creating playlist window} \
+   ${IFS# --fullscreen  to maximize window, so no borders will be seen } \
+    --marq-marquee="VLC window" ${IFS# Overlay text in VLC window for ability to recognize fullscreen vlc window} \
+    --meta-title "Do NOT share this window" ${IFS# To simplify selecting vlc window in hangouts } \
+    --no-video-title ${IFS# For not confusing you while target window opens } \
+    --no-video-deco ${IFS# hide the window menu}\
+    --no-embedded-video ${IFS# hide video control toolbar}\
+    --screen-fps=20 \
+    --screen-top=0 \
+    --screen-left=0 \
+    --screen-width=1920 \
+    --screen-height=1080 \
+    screen:// > /dev/null 2 > /dev/null &
+
+# wmctrl -r "Do NOT share this window - VLC media player" -b toggle,shaded # shading playlist window
+# xdotool windowminimize `xdotool search --name "Do NOT share this window - VLC media player"` # Minimizing playlist window
+
+# cp /dev/zero /dev/null &
+
+# sleep 1 # sleep a while, otherwize rename will not work
+TARGETWINDOW=`wmctrl -l | grep VLC | cut -f 1 -d " "`
+# TARGETWINDOW=`wmctrl -l | grep Dolphin | cut -f 1 -d " "`
+echo TARGETWINDOW=$TARGETWINDOW
+# wmctrl -i -r $TARGETWINDOW -N "share me" # rename to easily spot in hangouts window chooser. I do it such way cos title differs in different locales
+# wmctrl -r "share me" -t 1 # Move target window to second virtual desktop
+# rename and move to other desktop works, but for some reason it disappears from hangouts window chooser. So, I decided to not rename it
+wmctrl -i -r $TARGETWINDOW -t 1
+# echo -e "\n" # because shell prompt is not shown after vlc output ?
