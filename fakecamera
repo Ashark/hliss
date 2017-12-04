@@ -4,4 +4,14 @@
 sudo rmmod v4l2loopback
 sudo modprobe v4l2loopback video_nr=7 'card_label=myFakeCam'
 
-ffmpeg -f x11grab -r 20 -s 1920x1080 -i :0.0+0,0 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
+xrandr --listactivemonitors
+read -p "Which monitor you want to share: " MON_NUMBER
+
+MON_PARSE=`xrandr --listactivemonitors | grep "$MON_NUMBER:" | cut -f4 -d' '`
+MON_HEIGHT=`echo $MON_PARSE | cut -f2 -d'/' | cut -f2 -d'x'`
+MON_WIDTH=`echo $MON_PARSE | cut -f1 -d'/'`
+MON_X=`echo $MON_PARSE | cut -f2 -d'+'`
+MON_Y=`echo $MON_PARSE | cut -f3 -d'+'`
+
+# ffmpeg -f x11grab -r 20 -s 1920x1080 -i :0.0+0,0 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
+ffmpeg -f x11grab -r 20 -s "$MON_WIDTH"x"$MON_HEIGHT" -i :0.0+"$MON_X","$MON_Y" -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
