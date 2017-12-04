@@ -1,10 +1,22 @@
 #!/bin/bash
 
-PRODUCTNAME=`sudo dmidecode -t baseboard | grep "Product Name" | cut -f2 -d':'`
+# PRODUCTNAME=`sudo dmidecode -t baseboard | grep "Product Name" | cut -f2 -d':'`
 
 # I want to be sure that you do not run this on your machine without finding out usb bus id and port id. See readme first.
 # So I will do this check first
-if [[ "$PRODUCTNAME" == " Flex 3-1570" ]]; then 
-	sudo sh -c "echo '0'> /sys/bus/usb/devices/1-4/bConfigurationValue"
-	sudo sh -c "echo '1'> /sys/bus/usb/devices/1-4/bConfigurationValue" 
-fi
+# if [[ "$PRODUCTNAME" == " Flex 3-1570" ]]; then
+
+	# 04f2:b50f Chicony Electronics Co., Ltd - my internal webcam
+	VID=04f2 # change to yours
+	PID=b50f # change to yours
+	# Bus id may change after reboot, so we get it dynamically
+	BUS=`lsusb -d 04f2:b50f | cut -f2 -d' ' | tr -d '0'`
+# 	echo bus=$BUS
+	PORT=`lsusb -t | grep -m1 "Class=Video, Driver=uvcvideo," | cut -f1 -d':' | tr -d "|__ Port "`
+# 	echo port=$PORT
+	if [[ `cat /sys/bus/usb/devices/"$BUS"-"$PORT"/idVendor` == $VID &&
+		  `cat /sys/bus/usb/devices/"$BUS"-"$PORT"/idProduct` == $PID ]]; then
+		sudo sh -c "echo '0' > /sys/bus/usb/devices/"$BUS"-"$PORT"/bConfigurationValue"
+		sudo sh -c "echo '1' > /sys/bus/usb/devices/"$BUS"-"$PORT"/bConfigurationValue"
+	fi
+# fi

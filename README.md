@@ -44,35 +44,15 @@ Possible solutions
         - Just insert or remove any other usb webcam to your pc after creating virtual webcam. I have checked this, it works.
         - Simulate such action programmatically. I have found something about usb gadget, but did not checked it yet.
         - Unload uvcvideo driver then modprobe it again. Did not checked it yet.
-        - Programmatically disable/enable internal laptop webcam. Then chromium will show virtual webcam in its list of available cameras. I did it successfully.
+        - Programmatically disable/enable internal laptop webcam. Then chromium will show virtual webcam in its list of available cameras. I used this method successfully. It is in reinsert-internal-webcam script.
 
-
-How to programmatically activate/deactivate internal webcam
------------------------------------------------------------
-
-Find out you internal laptop webcam usb bus id and port id.
-How it looks for me:
-```
-$ lsusb
-Bus 001 Device 003: ID 04f2:b50f Chicony Electronics Co., Ltd
-
-$ lsusb -t
-/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/11p, 480M
-    |__ Port 4: Dev 3, If 1, Class=Video, Driver=uvcvideo, 480M
-    |__ Port 4: Dev 3, If 0, Class=Video, Driver=uvcvideo, 480M
-```
-So I run
-```
-    sudo sh -c "echo '0'> /sys/bus/usb/devices/1-4/bConfigurationValue"
-    sudo sh -c "echo '1'> /sys/bus/usb/devices/1-4/bConfigurationValue"
-```
-Then virtual camera is shown in list of available cameras in hangouts settings. I put this in reinsert-internal-webcam script.
-
-Used info from [askubuntu](https://askubuntu.com/questions/189708/how-to-disable-integrated-webcam-and-still-be-able-to-use-an-external-one) and [ubuntuforums](https://ubuntuforums.org/showthread.php?t=766891)
-
-How do I use it
----------------
-Just start fakecamera script or activate virtual camera in webcamoid. Then run reinsert-internal-webcam script. Then choose myFakeCam in the list of cameras in Hangouts window. Enjoy. You even do not need to restart chromium.
+How to use
+----------
+Edit PID and VID variables in fakecamera script according to your internal laptop webcam pid and vid (use lsusb).<br>
+Start fakecamera script or activate virtual camera in webcamoid.<br>
+Run reinsert-internal-webcam script.<br>
+Then choose myFakeCam in the list of cameras in Hangouts window.<br>
+Enjoy. You even do not need to restart chromium.<br>
 
 Tips
 ----
@@ -80,11 +60,11 @@ If you use webcamoid, then you will be able to switch shared screen on the fly.
 
 Related Links
 -------------
-[Original bug report in 2015](https://bugs.chromium.org/p/chromium/issues/detail?id=437507)
-
-[Another bug report](https://bugs.chromium.org/p/chromium/issues/detail?id=660032)
-
-[Question at unix.se](https://unix.stackexchange.com/questions/152435/sharing-your-desktop-with-google-hangouts-dual-monitor-and-gnome-shell)
+[Original bug report in 2015](https://bugs.chromium.org/p/chromium/issues/detail?id=437507)<br>
+[Another bug report](https://bugs.chromium.org/p/chromium/issues/detail?id=660032)<br>
+[Question at unix.se](https://unix.stackexchange.com/questions/152435/sharing-your-desktop-with-google-hangouts-dual-monitor-and-gnome-shell)<br>
+[Deactivate webcam info at askubuntu](https://askubuntu.com/questions/189708/how-to-disable-integrated-webcam-and-still-be-able-to-use-an-external-one)<br>
+[Redirections with root permissions at ubuntuforums](https://ubuntuforums.org/showthread.php?t=766891)
 
 You can make it better
 ----------------------
