@@ -6,17 +6,34 @@
 # So I will do this check first
 # if [[ "$PRODUCTNAME" == " Flex 3-1570" ]]; then
 
-	# 04f2:b50f Chicony Electronics Co., Ltd - my internal webcam
-	VID=04f2 # change to yours
-	PID=b50f # change to yours
-	# Bus id may change after reboot, so we get it dynamically
-	BUS=`lsusb -d 04f2:b50f | cut -f2 -d' ' | tr -d '0'`
-# 	echo bus=$BUS
-	PORT=`lsusb -t | grep -m1 "Class=Video, Driver=uvcvideo," | cut -f1 -d':' | tr -d "|__ Port "`
-# 	echo port=$PORT
-	if [[ `cat /sys/bus/usb/devices/"$BUS"-"$PORT"/idVendor` == $VID &&
-		  `cat /sys/bus/usb/devices/"$BUS"-"$PORT"/idProduct` == $PID ]]; then
-		sudo sh -c "echo '0' > /sys/bus/usb/devices/"$BUS"-"$PORT"/bConfigurationValue"
-		sudo sh -c "echo '1' > /sys/bus/usb/devices/"$BUS"-"$PORT"/bConfigurationValue"
+	# 04f2:b50f Chicony Electronics Co., Ltd - my lenovo flex 3 internal webcam
+	# 5986:02d2 Acer, Inc  - my lenovo e530 internal webcam
+	VID=5986 # change to yours
+	PID=02d2 # change to yours
+
+	# Check if such device is presented now
+	if [[ ! $(lsusb -d $VID:$PID | grep "$VID:$PID") ]]; then
+		echo $VID:$PID usb device is not presented now. Are you sure you set VID and PID correctly?
+	else # Now we know that such usb device is presented currently
+		# Bus id may change after reboot, so we get it dynamically
+		BUS=`lsusb -d $VID:$PID | cut -f2 -d' ' | tr -d '0'`
+# 		echo bus=$BUS
+		PORT_IN_STRING=`lsusb -t | grep -m1 "Class=Video, Driver=uvcvideo," | cut -f1 -d':'` # here we got string like "    |__ Port X"
+# 		echo PORT_IN_STRING="$PORT_IN_STRING"
+		SPACES_BEFORE_PORT=`expr $(echo "$PORT_IN_STRING" | wc -m) - 11` # minus count symbols for "|__ Port X" substring
+# 		echo SPACES_BEFORE_PORT = $SPACES_BEFORE_PORT
+		if [[ $SPACES_BEFORE_PORT == 4 ]]; then
+			PORT=`echo $PORT_IN_STRING | tr -d "|__ Port "`
+		elif [[ $SPACES_BEFORE_PORT == 8 ]]; then
+			PORT_MAJOR=`lsusb -t | grep -A1 "/:  Bus 0$BUS" | tail -n1 | cut -f1 -d':' | tr -d "|__ Port "`
+			PORT_MINOR=`echo $PORT_IN_STRING | tr -d "|__ Port "`
+			PORT=$PORT_MAJOR.$PORT_MINOR
+		fi
+# 		echo port=$PORT
+		if [[ `cat /sys/bus/usb/devices/"$BUS"-"$PORT"/idVendor` == $VID &&
+			`cat /sys/bus/usb/devices/"$BUS"-"$PORT"/idProduct` == $PID ]]; then
+			sudo sh -c "echo '0' > /sys/bus/usb/devices/"$BUS"-"$PORT"/bConfigurationValue"
+			sudo sh -c "echo '1' > /sys/bus/usb/devices/"$BUS"-"$PORT"/bConfigurationValue"
+		fi
 	fi
 # fi
