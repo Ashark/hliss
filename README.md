@@ -3,12 +3,23 @@ hliss - Hangouts Linux Individual Screen Share
 
 Share only individual screen via hangouts.
 
-Currently if you are using several monitors in linux and want to share one of them in Hangouts, you cannot do this. You can only share all screens simultaniously or choose individual window.
-This is for Linux only (do not know about Mac). On Windows it works as expected out of the box.
+![Chromium status](https://img.shields.io/badge/chromium-67.0.3396.62%20broken-red.svg)
+![Firefox status](https://img.shields.io/badge/firefox-60.0.1%20works-green.svg)
+
+Currently if you are using several monitors in Linux and want to share one of them in Hangouts, you cannot do this. Scripts in this repository are made to workaround this. This is for Linux only (on Windows and macOS it works as expected out of the box).
+
+Google support [informs](https://support.google.com/hangouts/answer/2944865) that hangouts is working in Chrome, Internet Explorer, Safari and Firefox. So in Linux we have two browsers to choose from: Chromium/Chrome and Firefox.
+
+## This table shows currently available options:
+
+| Browser | Out of the box | fakecamera | special window |
+| --- | --- | --- | --- |
+| Chromium 67.0.3396.62 | :red_circle: all screens simultaniously | :red_circle: doesn't work | works with some windows
+| Firefox 60.0.1 | :red_circle: all screens simultaniously | works | :red_circle: doesn't work
 
 
-Possible solutions
-------------------
+## Ideas for solutions
+
 1. Fix chrome/chromium browser itself
 
     There is a [bug report](https://bugs.chromium.org/p/chromium/issues/detail?id=437507) about this problem, but it is marked as WontFix. If somebody could explore and fix it, it'd be perfect.
@@ -36,23 +47,16 @@ Possible solutions
 4. Use fake webcam created with ffmpeg or some wrapper over it
 
     This is the most convinient solution I have found for now. You just grab needed screen with ffmpeg and switch camera in hangouts to show from. But there are still some problems:
-    - Chromium will not add virtual webcam to the list of availible webcams automatically.
-    It will only happen when chromium will be completely restarted (i.e. all browser windows should be closed, not only hangouts window) or only after usb webcam was removed/inserted.
+    - Chromium will not add virtual webcam to the list of availible webcams, see #1.
     
-        So I thought about several workaround of this:
-        - Patch chromium to automatically update that list even if it is virtual webcam.
-        - Just insert or remove any other usb webcam to your pc after creating virtual webcam. I have checked this, it works.
-        - Simulate such action programmatically. I have found something about usb gadget, but did not checked it yet.
-        - Unload uvcvideo driver then modprobe it again. Did not checked it yet.
-        - Programmatically disable/enable internal laptop webcam. Then chromium will show virtual webcam in its list of available cameras. I used this method successfully. It is in reinsert-internal-webcam script.
 
 How to use
 ----------
-Edit PID and VID variables in fakecamera script according to your internal laptop webcam pid and vid (use lsusb).<br>
+Make sure you have installed ffmpeg and v4l2loopback<br>
+Start Firefox browser<br>
 Start fakecamera script or activate virtual camera in webcamoid.<br>
-Run reinsert-internal-webcam script.<br>
 Then choose myFakeCam in the list of cameras in Hangouts window.<br>
-Enjoy. You even do not need to restart chromium.<br>
+Enjoy. You even do not need to restart browser.<br>
 
 Tips
 ----
