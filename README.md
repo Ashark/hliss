@@ -3,8 +3,8 @@ hliss - Hangouts Linux Individual Screen Share
 
 Share only individual screen via hangouts.
 
-![Chromium status](https://img.shields.io/badge/chromium-67.0.3396.62%20broken-red.svg)
-![Firefox status](https://img.shields.io/badge/firefox-60.0.1%20works-green.svg)
+![Chromium status](https://img.shields.io/badge/chromium%20v67.0.3396.62%20-workaround-green.svg)
+![Firefox status](https://img.shields.io/badge/firefox%20v60.0.1-workaround-green.svg)
 
 Currently if you are using several monitors in Linux and want to share one of them in Hangouts, you cannot do this. Scripts in this repository are made to workaround this. This is for Linux only (on Windows and macOS it works as expected out of the box).
 
@@ -14,7 +14,7 @@ Google support [informs](https://support.google.com/hangouts/answer/2944865) tha
 
 | Browser | Out of the box | fakecamera | special window |
 | --- | --- | --- | --- |
-| Chromium 67.0.3396.62 | :red_circle: all screens simultaniously | :red_circle: doesn't work | works with some windows
+| Chromium 67.0.3396.62 | :red_circle: all screens simultaniously | :red_circle: doesn't work | vlc-hangouts works
 | Firefox 60.0.1 | :red_circle: all screens simultaniously | works | :red_circle: doesn't work
 
 
@@ -34,7 +34,7 @@ Google support [informs](https://support.google.com/hangouts/answer/2944865) tha
     - You will be confused if you are watching at such window or at actual desktop.
     - Mouse cursor will be invisible, so you wanna use extramaus.
 
-	I tried to implement it, but stopped it. If you are interested, get look at vlc-hangouts script.
+	If you are interested, get look at vlc-hangouts script.
 
     2.2. Make a programm in qt, implementing transparent window titled like "Share me" and passing through mouse clicks and keyboard typing.
 
@@ -50,13 +50,20 @@ Google support [informs](https://support.google.com/hangouts/answer/2944865) tha
     - Chromium will not add virtual webcam to the list of availible webcams, see #1.
     
 
-How to use
-----------
+## How to use
+
+### fakecamera workaround
 Make sure you have installed ffmpeg and v4l2loopback<br>
 Start Firefox browser<br>
-Start fakecamera script or activate virtual camera in webcamoid.<br>
+Start fakecamera script, enter screen number or activate virtual camera in webcamoid.<br>
 Then choose myFakeCam in the list of cameras in Hangouts window.<br>
 Enjoy. You even do not need to restart browser.<br>
+
+### vlc-hangouts workaround
+Start Chromium browser<br>
+Start vlc-hangouts script, enter screen number.<br>
+Then go to hangouts video call window, go to menu (three dots in the upper right corner), share screen, select "choose window" tab, select vlc window<br>
+Enjoy.
 
 Tips
 ----

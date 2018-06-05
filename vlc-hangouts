@@ -1,5 +1,15 @@
 #!/bin/bash
 
+xrandr --listactivemonitors
+read -p "Which monitor you want to share: " MON_NUMBER
+
+MON_PARSE=`xrandr --listactivemonitors | grep "$MON_NUMBER:" | cut -f4 -d' '`
+MON_HEIGHT=`echo $MON_PARSE | cut -f2 -d'/' | cut -f2 -d'x'`
+MON_WIDTH=`echo $MON_PARSE | cut -f1 -d'/'`
+MON_X=`echo $MON_PARSE | cut -f2 -d'+'`
+MON_Y=`echo $MON_PARSE | cut -f3 -d'+'`
+
+
 # trap ctrl-c and call ctrl_c()
 
 function ctrl_c() {
@@ -22,10 +32,10 @@ cvlc ${IFS# cvlc will prevent creating playlist window} \
     --no-video-deco ${IFS# hide the window menu}\
     --no-embedded-video ${IFS# hide video control toolbar}\
     --screen-fps=20 \
-    --screen-top=0 \
-    --screen-left=0 \
-    --screen-width=1920 \
-    --screen-height=1080 \
+    --screen-top=$MON_Y \
+    --screen-left=$MON_X \
+    --screen-width=$MON_WIDTH \
+    --screen-height=$MON_HEIGHT \
     screen:// > /dev/null 2 > /dev/null &
 
 # wmctrl -r "Do NOT share this window - VLC media player" -b toggle,shaded # shading playlist window
