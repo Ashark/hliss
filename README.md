@@ -60,10 +60,12 @@ Then choose myFakeCam in the list of cameras in Hangouts window.<br>
 Enjoy. You even do not need to restart browser.<br>
 
 ### vlc-hangouts workaround
+Compile [ExtraMaus](http://dodger-tools.sourceforge.net/cms/index.php?id=100000201) and install it as ~/bin/extramaus<br>
 Start Chromium browser<br>
 Start vlc-hangouts script, enter screen number.<br>
-Then go to hangouts video call window, go to menu (three dots in the upper right corner), share screen, select "choose window" tab, select vlc window<br>
-Enjoy.
+Then go to hangouts video call browser window, go to menu (three dots in the upper right corner), share screen, select "choose window" tab, select window called ShareMe (it is renamed vlc window)<br>
+Enjoy.<br>
+After you close ShareMe window, extramaus will be stopped automatically.
 
 Tips
 ----

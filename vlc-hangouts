@@ -2,6 +2,7 @@
 
 xrandr --listactivemonitors
 read -p "Which monitor you want to share: " MON_NUMBER
+# MON_NUMBER=0 # for debugging
 
 MON_PARSE=`xrandr --listactivemonitors | grep "$MON_NUMBER:" | cut -f4 -d' '`
 MON_HEIGHT=`echo $MON_PARSE | cut -f2 -d'/' | cut -f2 -d'x'`
@@ -9,14 +10,14 @@ MON_WIDTH=`echo $MON_PARSE | cut -f1 -d'/'`
 MON_X=`echo $MON_PARSE | cut -f2 -d'+'`
 MON_Y=`echo $MON_PARSE | cut -f3 -d'+'`
 
-cvlc ${IFS# cvlc will prevent creating playlist window} \
+vlc ${IFS# } \
     --ignore-config ${IFS# I use pause-click plugin, but in this script I want it to be disabled} \
-   ${IFS# --fullscreen  to maximize window, so no borders will be seen } \
-    --marq-marquee="VLC window" ${IFS# Overlay text in VLC window for ability to recognize fullscreen vlc window} \
-    --meta-title "Do NOT share this window" ${IFS# To simplify selecting vlc window in hangouts } \
-    --no-video-title ${IFS# For not confusing you while target window opens } \
-    --no-video-deco ${IFS# hide the window menu}\
-    --no-embedded-video ${IFS# hide video control toolbar}\
+    --no-qt-privacy-ask ${IFS# Suppress first-run dialog pop-up } \
+    ${IFS# --fullscreen  to maximize window, so no borders will be seen } \
+    ${IFS# --marq-marquee="VLC window"  Overlay text in VLC window for ability to recognize fullscreen vlc window} \
+    --meta-title "ShareMe" ${IFS# To simplify selecting vlc window in hangouts } \
+    ${IFS# --no-video-title For not confusing you while target window opens } \
+    --qt-minimal-view ${IFS# hide video control and window menu }\
     --screen-fps=20 \
     --screen-top=$MON_Y \
     --screen-left=$MON_X \
@@ -29,8 +30,6 @@ VLC_PID=$!
 # wmctrl -r "Do NOT share this window - VLC media player" -b toggle,shaded # shading playlist window
 # xdotool windowminimize `xdotool search --name "Do NOT share this window - VLC media player"` # Minimizing playlist window
 
-# cp /dev/zero /dev/null &
-
 # sleep 1 # sleep a while, otherwize rename will not work
 # TARGETWINDOW=`wmctrl -l | grep VLC | cut -f 1 -d " "`
 # TARGETWINDOW=`wmctrl -l | grep Dolphin | cut -f 1 -d " "`
@@ -40,9 +39,6 @@ VLC_PID=$!
 # rename and move to other desktop works, but for some reason it disappears from hangouts window chooser. So, I decided to not rename it
 # wmctrl -i -r $TARGETWINDOW -t 1
 
-echo -e "\nWarning! Backgrounded VLC process remains active after its window was closed. This is a bug."
-echo "So do not close vlc window, use ctrl + q instead."
-
 cat << EOF | bash & # run extramaus while vlc is running
 ~/bin/extramaus & # launch extramaus and background it
 while ps -p $VLC_PID > /dev/null; do
@@ -50,5 +46,5 @@ while ps -p $VLC_PID > /dev/null; do
     sleep 1
 done
 # echo "PROCESS TERMINATED"
-killall extramaus # kill extramaus after vlc was terminated
+killall extramaus &> /dev/null # kill extramaus after vlc was terminated
 EOF
