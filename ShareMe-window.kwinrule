@@ -1,0 +1,14 @@
+[Window settings for vlc ShareMe window]
+Description=Window settings for vlc ShareMe window
+clientmachine=localhost
+clientmachinematch=0
+minimize=false
+minimizerule=2
+title=ShareMe
+titlematch=2
+types=1
+windowrole=vlc-main
+windowrolematch=1
+wmclass=vlc
+wmclasscomplete=false
+wmclassmatch=1
