@@ -20,9 +20,11 @@ Google support [informs](https://support.google.com/hangouts/answer/2944865) tha
 
 ## Ideas for solutions
 
-1. Fix chrome/chromium browser itself
+1. Fix chrome/chromium and Firefox browser itself
 
-    There is a [bug report](https://bugs.chromium.org/p/chromium/issues/detail?id=437507) about this problem, but it is marked as WontFix. If somebody could explore and fix it, it'd be perfect.
+    - Mozilla Firefox bug report about this probem: https://bugzilla.mozilla.org/show_bug.cgi?id=1552456
+    
+    - Chromium bug report about this problem: https://bugs.chromium.org/p/chromium/issues/detail?id=396091#c34 (already in progress)
 	
 2. Share a specially prepared window
 
