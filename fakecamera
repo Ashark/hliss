@@ -2,7 +2,7 @@
 
 # echo "Probing v4l2-loopback"
 sudo rmmod v4l2loopback 2> /dev/null
-sudo modprobe v4l2loopback video_nr=7 'card_label=myFakeCam'
+sudo modprobe v4l2loopback video_nr=7 exclusive_caps=1 'card_label=myFakeCam'
 
 xrandr --listactivemonitors
 read -p "Which monitor you want to share: " MON_NUMBER
