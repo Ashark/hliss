@@ -13,6 +13,18 @@ MON_WIDTH=`echo $MON_PARSE | cut -f1 -d'/'`
 MON_X=`echo $MON_PARSE | cut -f2 -d'+'`
 MON_Y=`echo $MON_PARSE | cut -f3 -d'+'`
 geom="${DISPLAY}+${MON_X},${MON_Y}"
+dim="${MON_WIDTH}x${MON_HEIGHT}"
 
-# ffmpeg -f x11grab -r 20 -s 1920x1080 -i :0.0+0,0 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
-ffmpeg -f x11grab -r 30 -s "$MON_WIDTH"x"$MON_HEIGHT" -i "${geom}" -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
+echo "Starting ffmpeg…"
+
+cleanup() {
+    # ensure that nothing from your screen stays in the video buffer after we exit
+    ffmpeg -loglevel fatal -f lavfi -r 30 -i "color=size=${dim}:rate=30:color=black" \
+           -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 -frames 1 /dev/video7
+}
+trap "cleanup" EXIT
+
+# ffmpeg -f x11grab -r 20 -s 1920x1080 -i :0.0+0,0 \
+#        -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
+ffmpeg -loglevel fatal -f x11grab -r 30 -s "${dim}" -i "${geom}" \
+       -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
