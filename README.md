@@ -59,6 +59,13 @@ Start fakecamera script, enter screen number or activate virtual camera in webca
 Then choose myFakeCam in the list of cameras in Hangouts window.<br>
 Enjoy. You even do not need to restart browser.<br>
 
+#### systemd service
+Running `make install-fakecamera` will install a system service file
+that runs the `fakecamera` script. You can start the camera by running
+`systemctl --user start fakecamera@0` (and you can stop it by running
+`systemctl --user stop fakecamera@0`). Change the monitor number after
+the @, if you want to record a different monitor.
+
 ### vlc-hangouts workaround
 Compile [ExtraMaus](http://dodger-tools.sourceforge.net/cms/index.php?id=100000201) and install it as ~/bin/extramaus<br>
 Optionally (if using kde) import ShareMe-window.kwinrule in Window Management settings.<br>

@@ -4,14 +4,43 @@
 sudo rmmod v4l2loopback 2> /dev/null
 sudo modprobe v4l2loopback video_nr=7 'card_label=myFakeCam'
 
-xrandr --listactivemonitors
-read -p "Which monitor you want to share: " MON_NUMBER
+input=$1
+if [[ -z ${input} ]]; then
+    xrandr --listactivemonitors
+    read -erp "Which monitor you want to share: " -i 0 MON_NUMBER
 
-MON_PARSE=`xrandr --listactivemonitors | grep "$MON_NUMBER:" | cut -f4 -d' '`
-MON_HEIGHT=`echo $MON_PARSE | cut -f2 -d'/' | cut -f2 -d'x'`
-MON_WIDTH=`echo $MON_PARSE | cut -f1 -d'/'`
-MON_X=`echo $MON_PARSE | cut -f2 -d'+'`
-MON_Y=`echo $MON_PARSE | cut -f3 -d'+'`
+    if [[ -z ${MON_NUMBER} ]]; then
+        echo "you must enter something; try again"
+        exit 2
+    fi
+else
+    MON_NUMBER=${input}
+fi
 
-# ffmpeg -f x11grab -r 20 -s 1920x1080 -i :0.0+0,0 -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
-ffmpeg -f x11grab -r 20 -s "$MON_WIDTH"x"$MON_HEIGHT" -i :0.0+"$MON_X","$MON_Y" -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
+MON_PARSE=$(xrandr --listactivemonitors | grep "$MON_NUMBER:" | cut -f4 -d' ')
+
+if [[ -z ${MON_PARSE} ]]; then
+    echo "monitor '${MON_NUMBER}' not found"
+    exit 1
+fi
+
+MON_HEIGHT=$(echo "$MON_PARSE" | cut -f2 -d'/' | cut -f2 -d'x')
+MON_WIDTH=$(echo "$MON_PARSE" | cut -f1 -d'/')
+MON_X=$(echo "$MON_PARSE" | cut -f2 -d'+')
+MON_Y=$(echo "$MON_PARSE" | cut -f3 -d'+')
+geom="${DISPLAY}+${MON_X},${MON_Y}"
+dim="${MON_WIDTH}x${MON_HEIGHT}"
+
+echo "Starting ffmpeg…"
+
+cleanup() {
+    # ensure that nothing from your screen stays in the video buffer after we exit
+    ffmpeg -loglevel fatal -f lavfi -r 30 -i "color=size=${dim}:rate=30:color=black" \
+           -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 -frames 1 /dev/video7
+}
+trap "cleanup" EXIT
+
+# ffmpeg -f x11grab -r 20 -s 1920x1080 -i :0.0+0,0 \
+#        -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7
+ffmpeg -loglevel fatal -f x11grab -r 30 -s "${dim}" -i "${geom}" \
+       -vcodec rawvideo -pix_fmt yuv420p -threads 0 -f v4l2 /dev/video7

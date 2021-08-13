@@ -1,0 +1,11 @@
+# I haven’t found a good way to have it work without manually setting
+# DISPLAY. Supposedly making it PartOf the graphical session is supposed
+# to do that; ymmv.
+[Unit]
+Description=fake webcam showing screen %i
+PartOf=graphical-session.target
+
+[Service]
+Environment=DISPLAY=:1
+# You should edit this path if you have installed fakecamera elsewhere.
+ExecStart=%h/bin/fakecamera %i
